@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "142t3aEREGNiw3lWzqbIMxRIXQQ/P/pfKsiyUtElsJqAfS6vC/RwsfESGAwMG2h+HdmL/QCJOu1BS8NLsSy7rA==",
+  "dgSpecHash": "ALe3aIWPgrcl2KKWdrEPCYQcxet2ISpmp/iGAUQt7terJ5EIWeUGdDuxII4F3LLZvhFthDZy34LXbgri5YlQ0g==",
   "success": true,
-  "projectFilePath": "/home/oldpc/SignalRServer/SignalRServer.csproj",
+  "projectFilePath": "/home/oldpc/SignalRserver/SignalRServer.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

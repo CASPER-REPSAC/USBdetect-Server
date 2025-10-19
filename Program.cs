@@ -16,29 +16,25 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .SetIsOriginAllowed(origin => true) // 모든 Origin 허용
               .AllowCredentials();
-            //   .WithOrigins(
-            //     "null",                      // WebView2(file://)
-            //     "http://localhost",
-            //     "http://127.0.0.1",
-            //     "http://192.168.0.50:5009"   // 서버 내부 IP (자기 IP로 변경)
-            // );
     });
 });
 
 var app = builder.Build();
 
-// 개발 환경에서는 HTTPS 리디렉션을 사용합니다.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseHttpsRedirection();
-// }
+// 4. (추가) 기본 파일을 설정합니다. (예: index.html)
+//    루트 경로로 접속 시 wwwroot 폴더의 index.html을 기본으로 보여줍니다.
+app.UseDefaultFiles();
 
-// 4. CORS 정책을 사용하도록 설정합니다.
+// 5. (추가) 정적 파일(html, css, js)을 사용하도록 설정합니다.
+//    wwwroot 폴더에 있는 파일들을 웹에서 접근할 수 있게 해줍니다.
+app.UseStaticFiles();
+
+// 6. CORS 정책을 사용하도록 설정합니다.
 app.UseCors("AllowAll");
 
 app.UseRouting();
 
-// 5. 클라이언트가 접속할 허브의 엔드포인트(주소)를 매핑합니다.
+// 7. 클라이언트가 접속할 허브의 엔드포인트(주소)를 매핑합니다.
 //    이제 클라이언트는 "서버주소/chathub"로 접속할 수 있습니다.
 app.MapHub<ChatHub>("/chathub");
 

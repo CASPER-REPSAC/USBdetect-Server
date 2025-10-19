@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR 채팅</title>
+    <!-- Tailwind CSS 로딩 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">SignalR 채팅</h1>
+        
+        <!-- 사용자 이름 입력 -->
+        <div class="mb-4">
+            <input type="text" id="userInput" placeholder="이름을 입력하세요..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"/>
+        </div>
+
+        <!-- 메시지 목록 -->
+        <div id="messagesList" class="h-64 overflow-y-auto bg-gray-50 p-4 rounded-lg border mb-4">
+            <!-- 채팅 메시지가 여기에 추가됩니다 -->
+        </div>
+
+        <!-- 메시지 입력 및 전송 -->
+        <div class="flex space-x-2">
+            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" disabled/>
+            <button id="sendButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition shadow-md disabled:bg-gray-400" disabled>전송</button>
+        </div>
+    </div>
+
+    <!-- SignalR 클라이언트 라이브러리 로딩 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userInput = document.getElementById('userInput');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const messagesList = document.getElementById('messagesList');
+            let connection = null;
+
+            // 1. SignalR 연결 객체 생성
+            // '/chathub'는 Program.cs에서 app.MapHub<ChatHub>("/chathub")로 설정한 주소입니다.
+            const setupConnection = () => {
+                connection = new signalR.HubConnectionBuilder()
+                    .withUrl("/chathub")
+                    .build();
+
+                // 2. 서버에서 메시지를 받았을 때 처리할 함수 등록 ('ReceiveMessage')
+                connection.on("ReceiveMessage", (user, message) => {
+                    const li = document.createElement("div");
+                    li.className = "mb-2";
+                    
+                    const userSpan = document.createElement("span");
+                    userSpan.className = "font-semibold text-gray-700";
+                    userSpan.textContent = `${user}: `;
+
+                    const messageSpan = document.createElement("span");
+                    messageSpan.className = "text-gray-600";
+                    messageSpan.textContent = message;
+
+                    li.appendChild(userSpan);
+                    li.appendChild(messageSpan);
+                    
+                    messagesList.appendChild(li);
+                    messagesList.scrollTop = messagesList.scrollHeight; // 스크롤을 맨 아래로 이동
+                });
+
+                // 3. 서버와 연결 시작
+                connection.start()
+                    .then(() => {
+                        console.log("서버에 연결되었습니다.");
+                        messageInput.disabled = false;
+                        sendButton.disabled = false;
+                    })
+                    .catch(err => console.error('연결 오류: ', err.toString()));
+            };
+
+            // 사용자 이름이 입력되면 연결 시작
+            userInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter' && userInput.value.trim() && !connection) {
+                    setupConnection();
+                    userInput.disabled = true;
+                    messageInput.focus();
+                }
+            });
+
+            // 전송 버튼 클릭 이벤트
+            sendButton.addEventListener("click", sendMessage);
+            
+            // 메시지 입력창에서 Enter 키 이벤트
+            messageInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // 4. 서버로 메시지 전송하는 함수 ('SendMessage')
+            function sendMessage() {
+                const user = userInput.value.trim();
+                const message = messageInput.value.trim();
+
+                if (connection && user && message) {
+                    // ChatHub.cs의 SendMessage 메서드를 호출합니다.
+                    connection.invoke("SendMessage", user, message)
+                        .catch(err => console.error('메시지 전송 오류: ', err.toString()));
+                    
+                    messageInput.value = "";
+                    messageInput.focus();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
