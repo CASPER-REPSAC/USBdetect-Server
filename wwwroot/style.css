@@ -1,0 +1,116 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.page {
+    background-color: #f7fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.card {
+    width: 100%;
+    max-width: 28rem;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+.input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.input:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.messages {
+    height: 16rem;
+    overflow-y: auto;
+    background-color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    margin-bottom: 1rem;
+}
+
+.message-item {
+    margin-bottom: 0.5rem;
+}
+
+.message-item:last-child {
+    margin-bottom: 0;
+}
+
+.message-user {
+    font-weight: 600;
+    color: #374151;
+}
+
+.message-text {
+    color: #4b5563;
+}
+
+.input-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-row .input {
+    flex-grow: 1;
+}
+
+.button {
+    background-color: #3b82f6;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3), 0 4px 6px -4px rgba(59, 130, 246, 0.3);
+    border: none;
+    cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+}
+
+.button:disabled {
+    background-color: #9ca3af;
+    box-shadow: none;
+    cursor: not-allowed;
+}

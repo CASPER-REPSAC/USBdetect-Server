@@ -4,31 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SignalR 채팅</title>
-    <!-- Tailwind CSS 로딩 -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="page">
 
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">SignalR 채팅</h1>
+    <div class="card">
+        <h1 class="title">SignalR 채팅</h1>
         
         <!-- 사용자 이름 입력 -->
-        <div class="mb-4">
-            <input type="text" id="userInput" placeholder="이름을 입력하세요..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"/>
+        <div class="input-group">
+            <input type="text" id="userInput" placeholder="이름을 입력하세요..." class="input"/>
         </div>
 
         <!-- 메시지 목록 -->
-        <div id="messagesList" class="h-64 overflow-y-auto bg-gray-50 p-4 rounded-lg border mb-4">
+        <div id="messagesList" class="messages">
             <!-- 채팅 메시지가 여기에 추가됩니다 -->
         </div>
 
         <!-- 메시지 입력 및 전송 -->
-        <div class="flex space-x-2">
-            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" disabled/>
-            <button id="sendButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition shadow-md disabled:bg-gray-400" disabled>전송</button>
+        <div class="input-row">
+            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." class="input" disabled/>
+            <button id="sendButton" class="button" disabled>전송</button>
         </div>
     </div>
 
@@ -53,14 +49,14 @@
                 // 2. 서버에서 메시지를 받았을 때 처리할 함수 등록 ('ReceiveMessage')
                 connection.on("ReceiveMessage", (user, message) => {
                     const li = document.createElement("div");
-                    li.className = "mb-2";
+                    li.className = "message-item";
                     
                     const userSpan = document.createElement("span");
-                    userSpan.className = "font-semibold text-gray-700";
+                    userSpan.className = "message-user";
                     userSpan.textContent = `${user}: `;
 
                     const messageSpan = document.createElement("span");
-                    messageSpan.className = "text-gray-600";
+                    messageSpan.className = "message-text";
                     messageSpan.textContent = message;
 
                     li.appendChild(userSpan);
