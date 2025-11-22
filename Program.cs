@@ -1,13 +1,12 @@
 using SignalRServer.Hubs;
 using SignalRServer.Services;
-using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 2. SignalR 서비스를 DI(Dependency Injection) 컨테이너에 추가합니다.
+// 1. SignalR 서비스를 DI(Dependency Injection) 컨테이너에 추가합니다.
 builder.Services.AddSignalR();
 
-// SQLite 기반의 클라이언트 저장소를 DI 컨테이너에 추가합니다.
+// 2. SQLite 기반의 클라이언트 저장소를 DI 컨테이너에 추가합니다.
 var dbPath = Path.Combine(builder.Environment.ContentRootPath, "clients.db");
 builder.Services.AddSingleton<IClientRepository>(_ => new SqliteClientRepository($"Data Source={dbPath}"));
 
@@ -42,6 +41,31 @@ app.UseRouting();
 // 7. 클라이언트가 접속할 허브의 엔드포인트(주소)를 매핑합니다.
 //    이제 클라이언트는 "서버주소/chathub"로 접속할 수 있습니다.
 app.MapHub<ChatHub>("/chathub");
+
+// index.html Route
+app.MapGet("/", async context =>
+{
+    await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "index.html"));
+});
+
+// talk Route
+app.MapGet("/talk", async context =>
+{
+    await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "talk/talk.html"));
+});
+
+// board Route
+app.MapGet("/board", async context =>
+{
+    await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "board/board.html"));
+});
+
+// 404 Route
+app.MapFallback(async context =>
+{
+    context.Response.StatusCode = 404;
+    await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "404/404.html"));
+});
 
 // 서버를 실행합니다.
 app.Run();

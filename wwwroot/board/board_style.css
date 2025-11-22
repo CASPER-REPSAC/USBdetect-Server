@@ -1,0 +1,258 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* 사이드바 */
+.sidebar {
+  width: 240px;
+  background-color: #111827;
+  color: #e5e7eb;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  padding: 0 8px;
+}
+
+.nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  color: #d1d5db;
+}
+
+.nav-item span.icon {
+  width: 20px;
+  margin-right: 8px;
+  text-align: center;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+.sidebar-footer {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* 메인 */
+.main {
+  flex: 1;
+  padding: 24px 32px;
+}
+
+.main-header {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  padding: 20px 24px 24px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* 사용자 목록 */
+.table-header,
+.user-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 100px 120px 140px;
+  column-gap: 16px;
+  font-size: 13px;
+  align-items: center;
+}
+
+.table-header {
+  color: #9ca3af;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.user-rows {
+  margin-top: 4px;
+}
+
+.user-row {
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+}
+
+.user-row.active {
+  background-color: #f9fafb;
+  border-left: 3px solid #3b82f6;
+  margin-left: -27px;
+  padding-left: 24px;
+}
+
+.status-col {
+  display: flex;
+  align-items: center;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+.online {
+  background-color: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
+}
+
+.offline {
+  background-color: #9ca3af;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.pc-name {
+  font-family: "SF Mono", monospace;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* USB 상세 */
+.usb-detail {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-top: 12px;
+  padding: 16px 18px;
+  background-color: #f9fafb;
+}
+
+.usb-detail-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.usb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.usb-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.usb-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.usb-sn {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.usb-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-allowed {
+  font-size: 12px;
+  color: #15803d;
+  font-weight: 600;
+}
+
+.badge-blocked {
+  font-size: 12px;
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* 스위치 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #e5e7eb;
+  transition: 0.2s;
+  border-radius: 999px;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: 0.2s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.switch input:checked + .slider {
+  background-color: #2563eb;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(18px);
+}

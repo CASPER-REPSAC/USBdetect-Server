@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>USB 관리 시스템 - 대시보드</title>
+  <link rel="stylesheet" href="/board/board_style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">USB 관리 시스템</div>
+      <ul class="nav">
+        <li class="nav-item active">
+          <span class="icon">📊</span>
+          <span>대시보드</span>
+        </li>
+        <li class="nav-item">
+          <span class="icon">✅</span>
+          <span>화이트리스트 관리</span>
+        </li>
+        <li class="nav-item">
+          <span class="icon">📜</span>
+          <span>로그 기록</span>
+        </li>
+        <li class="nav-item">
+          <span class="icon">⚙️</span>
+          <span>설정</span>
+        </li>
+      </ul>
+      <div class="sidebar-footer">v1.0 • 내부용</div>
+    </aside>
+
+    <!-- 메인 -->
+    <main class="main">
+      <div class="main-header">사용자 모니터링 대시보드</div>
+
+      <section class="card">
+        <div class="card-title">연결된 사용자 목록</div>
+
+        <!-- 헤더 -->
+        <div class="table-header">
+          <div>상태</div>
+          <div>부서</div>
+          <div>직급</div>
+          <div>사용자</div>
+          <div>컴퓨터 이름</div>
+        </div>
+
+        <div class="user-rows">
+          <!-- 첫 번째 사용자 -->
+          <div class="user-row active">
+            <div class="status-col"><span class="status-dot online"></span></div>
+            <div>개발팀</div>
+            <div>팀장</div>
+            <div class="user-name">홍길동</div>
+            <div class="pc-name">DEV-PC-01</div>
+          </div>
+
+          <div class="usb-detail">
+            <div class="usb-detail-title">연결된 USB 장치 (홍길동)</div>
+            <div class="usb-list">
+              <div class="usb-item">
+                <div>
+                  <div class="usb-name">Kingston DataTraveler</div>
+                  <div class="usb-sn">(S/N: 001A...B2C)</div>
+                </div>
+                <div class="usb-right">
+                  <span class="badge-allowed">허용됨</span>
+                  <label class="switch">
+                    <input type="checkbox" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="usb-item">
+                <div>
+                  <div class="usb-name">Logitech Unifying Receiver</div>
+                  <div class="usb-sn">(S/N: 4007...11F)</div>
+                </div>
+                <div class="usb-right">
+                  <span class="badge-blocked">차단됨</span>
+                  <label class="switch">
+                    <input type="checkbox" />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 나머지 사용자 -->
+          <div class="user-row">
+            <div class="status-col"><span class="status-dot online"></span></div>
+            <div>마케팅팀</div>
+            <div>사원</div>
+            <div class="user-name">이순신</div>
+            <div class="pc-name">MKT-PC-05</div>
+          </div>
+
+          <div class="user-row">
+            <div class="status-col"><span class="status-dot online"></span></div>
+            <div>인사팀</div>
+            <div>대리</div>
+            <div class="user-name">유관순</div>
+            <div class="pc-name">HR-PC-02</div>
+          </div>
+
+          <div class="user-row">
+            <div class="status-col"><span class="status-dot online"></span></div>
+            <div>재무팀</div>
+            <div>사원</div>
+            <div class="user-name">강감찬</div>
+            <div class="pc-name">FIN-PC-03</div>
+          </div>
+
+          <div class="user-row">
+            <div class="status-col"><span class="status-dot online"></span></div>
+            <div>디자인팀</div>
+            <div>과장</div>
+            <div class="user-name">김유신</div>
+            <div class="pc-name">DSN-PC-01</div>
+          </div>
+
+          <div class="user-row">
+            <div class="status-col"><span class="status-dot online"></span></div>
+            <div>기획팀</div>
+            <div>부장</div>
+            <div class="user-name">세종대왕</div>
+            <div class="pc-name">PLAN-PC-01</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

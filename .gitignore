@@ -425,5 +425,6 @@ obj
 # === Custom ignore: local scripts & runtime files ===
 server-up.sh
 server-down.sh
+server-restart.sh
 server.log
 server.pid
