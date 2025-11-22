@@ -34,12 +34,13 @@ body {
 
 .input {
     width: 100%;
-    padding: 0.5rem 1rem;
+    padding: 0.5em;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     font-size: 1rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     outline: none;
+    box-sizing: border-box; /* 박스 크기 고정 */
 }
 
 .input:focus {
@@ -60,6 +61,7 @@ body {
     border-radius: 0.5rem;
     border: 1px solid #d1d5db;
     margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 .message-item {
@@ -88,16 +90,27 @@ body {
     flex-grow: 1;
 }
 
+.select {
+    appearance: none;
+    background-color: #ffffff;
+}
+
+.select:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
 .button {
     background-color: #3b82f6;
     color: #ffffff;
     font-weight: 700;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 2rem;
     border-radius: 0.5rem;
     transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3), 0 4px 6px -4px rgba(59, 130, 246, 0.3);
     border: none;
     cursor: pointer;
+    white-space: nowrap; /* 들여쓰기 불가능하게 (강제) */
 }
 
 .button:hover:not(:disabled) {

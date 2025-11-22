@@ -16,6 +16,14 @@
             <input type="text" id="userInput" placeholder="이름을 입력하세요..." class="input"/>
         </div>
 
+        <!-- 대상 사용자 선택 및 새로고침 -->
+        <div class="input-row">
+            <select id="targetSelect" class="input select" disabled>
+                <option value="">대상 사용자를 선택하세요</option>
+            </select>
+            <button id="refreshButton" class="button" disabled>새로고침</button>
+        </div>
+
         <!-- 메시지 목록 -->
         <div id="messagesList" class="messages">
             <!-- 채팅 메시지가 여기에 추가됩니다 -->
@@ -36,57 +44,124 @@
             const userInput = document.getElementById('userInput');
             const messageInput = document.getElementById('messageInput');
             const sendButton = document.getElementById('sendButton');
+            const targetSelect = document.getElementById('targetSelect');
+            const refreshButton = document.getElementById('refreshButton');
             const messagesList = document.getElementById('messagesList');
             let connection = null;
+            let currentUserName = "";
 
             // 1. SignalR 연결 객체 생성
             // '/chathub'는 Program.cs에서 app.MapHub<ChatHub>("/chathub")로 설정한 주소입니다.
-            const setupConnection = () => {
+            const setupConnection = async () => {
+                currentUserName = userInput.value.trim();
+
+                if (!currentUserName) {
+                    return;
+                }
+
                 connection = new signalR.HubConnectionBuilder()
-                    .withUrl("/chathub")
+                    .withUrl(`/chathub?username=${encodeURIComponent(currentUserName)}`)
                     .build();
 
                 // 2. 서버에서 메시지를 받았을 때 처리할 함수 등록 ('ReceiveMessage')
                 connection.on("ReceiveMessage", (user, message) => {
-                    const li = document.createElement("div");
-                    li.className = "message-item";
-                    
-                    const userSpan = document.createElement("span");
-                    userSpan.className = "message-user";
-                    userSpan.textContent = `${user}: `;
+                    appendMessage(`${user} → 나`, message);
+                });
 
-                    const messageSpan = document.createElement("span");
-                    messageSpan.className = "message-text";
-                    messageSpan.textContent = message;
-
-                    li.appendChild(userSpan);
-                    li.appendChild(messageSpan);
-                    
-                    messagesList.appendChild(li);
-                    messagesList.scrollTop = messagesList.scrollHeight; // 스크롤을 맨 아래로 이동
+                connection.onclose(() => {
+                    sendButton.disabled = true;
+                    messageInput.disabled = true;
+                    refreshButton.disabled = true;
+                    targetSelect.disabled = true;
                 });
 
                 // 3. 서버와 연결 시작
                 connection.start()
-                    .then(() => {
+                    .then(async () => {
                         console.log("서버에 연결되었습니다.");
                         messageInput.disabled = false;
-                        sendButton.disabled = false;
+                        refreshButton.disabled = false;
+                        targetSelect.disabled = false;
+                        userInput.disabled = true;
+                        await refreshClients();
+                        messageInput.focus();
                     })
                     .catch(err => console.error('연결 오류: ', err.toString()));
+            };
+
+            const appendMessage = (label, message) => {
+                const li = document.createElement("div");
+                li.className = "message-item";
+                
+                const userSpan = document.createElement("span");
+                userSpan.className = "message-user";
+                userSpan.textContent = `${label}: `;
+
+                const messageSpan = document.createElement("span");
+                messageSpan.className = "message-text";
+                messageSpan.textContent = message;
+
+                li.appendChild(userSpan);
+                li.appendChild(messageSpan);
+                
+                messagesList.appendChild(li);
+                messagesList.scrollTop = messagesList.scrollHeight; // 스크롤을 맨 아래로 이동
+            };
+
+            const renderTargetOptions = (clients) => {
+                const previousValue = targetSelect.value;
+                targetSelect.innerHTML = "";
+
+                const placeholder = document.createElement("option");
+                placeholder.value = "";
+                placeholder.textContent = clients.length ? "대상 사용자를 선택하세요" : "연결된 사용자가 없습니다";
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                targetSelect.appendChild(placeholder);
+
+                clients.forEach(client => {
+                    const option = document.createElement("option");
+                    option.value = client.connectionId;
+                    option.textContent = client.name;
+                    option.dataset.name = client.name;
+                    targetSelect.appendChild(option);
+
+                    if (client.connectionId === previousValue) {
+                        option.selected = true;
+                        placeholder.selected = false;
+                    }
+                });
+
+                updateSendButtonState();
+            };
+
+            const refreshClients = async () => {
+                if (!connection) return;
+
+                try {
+                    const clients = await connection.invoke("GetConnectedClients");
+                    const otherClients = clients.filter(client => client.connectionId !== connection.connectionId);
+                    renderTargetOptions(otherClients);
+                } catch (err) {
+                    console.error("클라이언트 목록을 불러오지 못했습니다:", err.toString());
+                }
+            };
+
+            const updateSendButtonState = () => {
+                sendButton.disabled = !connection || messageInput.disabled || !targetSelect.value;
             };
 
             // 사용자 이름이 입력되면 연결 시작
             userInput.addEventListener('keyup', (event) => {
                 if (event.key === 'Enter' && userInput.value.trim() && !connection) {
                     setupConnection();
-                    userInput.disabled = true;
-                    messageInput.focus();
                 }
             });
 
             // 전송 버튼 클릭 이벤트
             sendButton.addEventListener("click", sendMessage);
+            targetSelect.addEventListener("change", updateSendButtonState);
+            refreshButton.addEventListener("click", refreshClients);
             
             // 메시지 입력창에서 Enter 키 이벤트
             messageInput.addEventListener('keyup', (event) => {
@@ -99,14 +174,18 @@
             function sendMessage() {
                 const user = userInput.value.trim();
                 const message = messageInput.value.trim();
+                const targetConnectionId = targetSelect.value;
+                const targetName = targetSelect.options[targetSelect.selectedIndex]?.dataset.name || "";
 
-                if (connection && user && message) {
-                    // ChatHub.cs의 SendMessage 메서드를 호출합니다.
-                    connection.invoke("SendMessage", user, message)
+                if (connection && user && message && targetConnectionId) {
+                    // ChatHub.cs의 SendMessageToClient 메서드를 호출합니다.
+                    connection.invoke("SendMessageToClient", targetConnectionId, user, message)
+                        .then(() => appendMessage(`나 → ${targetName || "대상"}`, message))
                         .catch(err => console.error('메시지 전송 오류: ', err.toString()));
                     
                     messageInput.value = "";
                     messageInput.focus();
+                    updateSendButtonState();
                 }
             }
         });

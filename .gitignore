@@ -420,6 +420,7 @@ FodyWeavers.xsd
 # Custom
 bin
 obj
+*.db
 
 # === Custom ignore: local scripts & runtime files ===
 server-up.sh
