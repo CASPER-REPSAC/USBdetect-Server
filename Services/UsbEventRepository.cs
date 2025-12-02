@@ -22,6 +22,7 @@ namespace SignalRServer.Services
     public interface IUsbEventRepository
     {
         Task AddEventsAsync(IEnumerable<UsbEvent> usbEvents);
+        Task<IReadOnlyList<UsbEvent>> GetRecentEventsAsync(int take = 100);
     }
 
     public class SqliteUsbEventRepository : IUsbEventRepository
@@ -147,6 +148,43 @@ namespace SignalRServer.Services
             }
 
             await transaction.CommitAsync();
+        }
+
+        public async Task<IReadOnlyList<UsbEvent>> GetRecentEventsAsync(int take = 100)
+        {
+            var result = new List<UsbEvent>();
+
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            await using var command = connection.CreateCommand();
+            command.CommandText =
+                @"SELECT Id, ConnectionId, DeviceIndex, VendorId, ProductId,
+                         SerialNumber, ProductString, ManufacturerString, IsBlocked, DetectedAt
+                  FROM UsbEvents
+                  ORDER BY datetime(DetectedAt) DESC
+                  LIMIT $take;";
+            command.Parameters.AddWithValue("$take", take);
+
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                result.Add(new UsbEvent
+                {
+                    Id = reader.GetInt32(0),
+                    ConnectionId = reader.GetString(1),
+                    DeviceIndex = (uint)reader.GetInt64(2),
+                    VendorId = (ushort)reader.GetInt32(3),
+                    ProductId = (ushort)reader.GetInt32(4),
+                    SerialNumber = reader.GetString(5),
+                    ProductString = reader.GetString(6),
+                    ManufacturerString = reader.GetString(7),
+                    IsBlocked = reader.GetInt32(8) == 1,
+                    DetectedAt = DateTime.Parse(reader.GetString(9), null, System.Globalization.DateTimeStyles.RoundtripKind)
+                });
+            }
+
+            return result;
         }
     }
 }

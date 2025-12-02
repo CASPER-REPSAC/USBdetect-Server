@@ -43,6 +43,14 @@ app.UseRouting();
 //    이제 클라이언트는 "서버주소/chathub"로 접속할 수 있습니다.
 app.MapHub<ChatHub>("/chathub");
 
+// API: USB 이벤트 최근 목록 조회 (기본 100개)
+app.MapGet("/api/usb-events", async (IUsbEventRepository repo, int? take) =>
+{
+    var limit = take.HasValue && take.Value > 0 ? Math.Min(take.Value, 500) : 100;
+    var events = await repo.GetRecentEventsAsync(limit);
+    return Results.Ok(events);
+});
+
 // index.html Route
 app.MapGet("/", async context =>
 {
