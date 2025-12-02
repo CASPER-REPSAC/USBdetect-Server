@@ -9,6 +9,7 @@ builder.Services.AddSignalR();
 // 2. SQLite 기반의 클라이언트 저장소를 DI 컨테이너에 추가합니다.
 var dbPath = Path.Combine(builder.Environment.ContentRootPath, "clients.db");
 builder.Services.AddSingleton<IClientRepository>(_ => new SqliteClientRepository($"Data Source={dbPath}"));
+builder.Services.AddSingleton<IUsbEventRepository>(_ => new SqliteUsbEventRepository($"Data Source={dbPath}"));
 
 // 3. (매우 중요) CORS 정책을 추가하여 다른 도메인(WinForm 등)의 접속을 허용합니다.
 //    이 설정을 하지 않으면 클라이언트가 접속할 때 보안 오류가 발생합니다.

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>화이트리스트 관리</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 class="sidebar-header">USB 관리 시스템</h2>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html"><span>🖥️</span> 대시보드</a></li>
+                <li><a href="whitelist.html" class="active"><span>🛡️</span> 화이트리스트 관리</a></li>
+                <li><a href="#"><span>📜</span> 로그 기록</a></li>
+                <li><a href="#"><span>⚙️</span> 설정</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header class="main-header">
+            <h1>화이트리스트 관리</h1>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h3 class="card-header">새 USB 장치 등록</h3>
+                <form class="whitelist-form">
+                    <input type="text" placeholder="USB 시리얼 넘버 (S/N)" required class="form-input">
+                    <input type="text" placeholder="설명 (예: 개발팀 공용 USB)" class="form-input">
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 class="card-header">등록된 장치 목록</h3>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>시리얼 넘버</th>
+                            <th>설명</th>
+                            <th>등록일</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001A...B2C</td>
+                            <td>홍길동 팀장 개인 USB</td>
+                            <td>2025-10-01</td>
+                            <td><button class="btn btn-danger">삭제</button></td>
+                        </tr>
+                        <tr>
+                            <td>99A8...C4E</td>
+                            <td>인사팀 서류 백업용</td>
+                            <td>2025-09-15</td>
+                            <td><button class="btn btn-danger">삭제</button></td>
+                        </tr>
+                        <tr>
+                            <td>A77C...123</td>
+                            <td>전사 공용 (신뢰)</td>
+                            <td>2025-01-10</td>
+                            <td><button class="btn btn-danger">삭제</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

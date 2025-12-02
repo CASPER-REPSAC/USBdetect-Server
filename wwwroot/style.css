@@ -1,0 +1,326 @@
+/* :root 변수로 남색/흰색 테마 관리 */
+:root {
+    --color-indigo-800: #1b2f42; /* 메인 남색 (더 짙은 톤으로 변경) */
+    --color-indigo-700: #34495e;
+    --color-indigo-600: #243b82; /* 하이라이트 남색 */
+    --color-indigo-200: #ebf4ff;
+    --color-indigo-100: #f0f4f8; /* 홀짝용 연한 남색 */
+    --color-indigo-50: #f8faff;  /* 헤더용 연한 남색 */
+
+    --color-text-light: #ecf0f1;
+    --color-text-dark: #34495e;
+    --color-text-gray: #7f8c8d;
+    
+    --color-bg-body: #f4f7f6;
+    --color-bg-white: #ffffff;
+    
+    --color-green: #2ecc71;
+    --color-red: #e74c3c;
+    --color-gray: #bdc3c7;
+    
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --border-radius-lg: 0.5rem; /* 8px */
+    --border-radius-md: 0.375rem; /* 6px */
+}
+
+/* 빛나는 효과 Keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px 0px var(--color-green);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 8px 3px var(--color-green);
+    opacity: 0.8;
+  }
+}
+
+/* 기본 & 레이아웃 */
+body {
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    margin: 0;
+    display: flex;
+    background-color: var(--color-bg-body);
+    color: var(--color-text-dark);
+}
+
+.sidebar {
+    width: 256px;
+    background-color: var(--color-indigo-800);
+    color: var(--color-text-light);
+    height: 100vh;
+    position: fixed;
+    padding: 24px;
+    box-sizing: border-box;
+    box-shadow: var(--shadow-md);
+}
+
+.main-content {
+    margin-left: 256px;
+    flex-grow: 1;
+    padding: 32px;
+}
+
+/* 사이드바 */
+.sidebar-header {
+    text-align: center;
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-indigo-700);
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 0.75rem; /* 12px */
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: var(--border-radius-md);
+    text-decoration: none;
+    color: var(--color-text-light);
+    transition: background-color 0.2s, color 0.2s;
+    font-weight: 500;
+}
+.sidebar-nav a:hover {
+    background-color: var(--color-indigo-700);
+}
+.sidebar-nav a.active {
+    background-color: var(--color-indigo-600);
+    font-weight: 700;
+}
+.sidebar-nav a span {
+    margin-right: 0.75rem;
+}
+
+/* 메인 콘텐츠 */
+.main-header {
+    margin-bottom: 2rem;
+}
+.main-header h1 {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    color: var(--color-text-dark);
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-indigo-200);
+}
+
+.card {
+    background-color: var(--color-bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    margin-bottom: 2rem;
+}
+.card-header {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--color-indigo-800);
+}
+
+/* 테이블 */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.user-table thead {
+    background-color: var(--color-indigo-50);
+}
+
+.user-table th, .user-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-indigo-200);
+    vertical-align: middle;
+}
+
+.user-table th {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    color: var(--color-text-gray);
+    text-transform: uppercase;
+}
+
+.user-row {
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+.user-row:hover {
+    background-color: var(--color-indigo-50);
+}
+
+/* 상태 표시 점 (빛나는 효과) */
+.status-dot {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+.status-dot.online {
+    background-color: var(--color-green);
+    /* 애니메이션 적용 */
+    animation: pulse-glow 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.status-dot.offline {
+    background-color: var(--color-gray);
+}
+
+/* 상세 정보 행 (숨김/보임) */
+.details-row {
+    display: none; /* JS로 컨트롤 */
+}
+.details-row.visible {
+    display: table-row;
+}
+.details-cell {
+    padding: 0 !important; /* 테이블 기본 패딩 제거 */
+    border-bottom: 1px solid var(--color-indigo-200);
+}
+.details-content {
+    background-color: var(--color-bg-white);
+    padding: 24px;
+    border-left: 4px solid var(--color-indigo-600); /* 왼쪽에 강조 선 */
+}
+.details-content h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-indigo-800);
+}
+
+/* 상세 정보 - USB 장치 목록 (홀짝 구분) */
+.usb-device {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: var(--border-radius-md);
+}
+/* 홀짝 구분 */
+.usb-device:nth-child(even) {
+    background-color: var(--color-indigo-100);
+}
+.usb-device-info strong {
+    color: var(--color-text-dark);
+}
+.usb-device-info span {
+    color: var(--color-text-gray);
+    font-size: 0.9rem;
+}
+
+/* 토글 스위치 */
+.control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.status-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.status-text.allowed {
+    color: var(--color-green);
+}
+.status-text.blocked {
+    color: var(--color-red);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px; /* 크기 조정 */
+    height: 24px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-gray);
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: var(--color-indigo-600);
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* 화이트리스트 폼 */
+.whitelist-form {
+    display: flex;
+    gap: 1rem;
+}
+.form-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-indigo-600);
+    box-shadow: 0 0 0 2px var(--color-indigo-200);
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+.btn-primary {
+    background-color: var(--color-indigo-600);
+    color: white;
+}
+.btn-primary:hover {
+    opacity: 0.9;
+}
+.btn-danger {
+    background-color: var(--color-red);
+    color: white;
+    padding: 6px 12px; /* 작은 버튼 */
+    font-size: 0.9rem;
+}
+.btn-danger:hover {
+    opacity: 0.9;
+}

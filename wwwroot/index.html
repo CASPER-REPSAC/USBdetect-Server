@@ -1,46 +1,345 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Hello Admin</title>
-<style>
-  html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #2c3e50;
-  }
-
-  .test-text {
-    font-family: Arial, sans-serif;
-    font-size: 12vw; /* 반응형 글자 크기 */
-    color: #ecf0f1;
-    text-align: center;
-    text-shadow: 0 0 10px #ecf0f1, 0 0 20px #ecf0f1, 0 0 30px #ecf0f1,
-                 0 0 40px #3498db, 0 0 70px #3498db, 0 0 80px #3498db,
-                 0 0 100px #3498db, 0 0 150px #3498db;
-    animation: neon-glow 1.5s ease-in-out infinite alternate;
-    line-height: 1.1;
-  }
-
-  @keyframes neon-glow {
-    from {
-      text-shadow: 0 0 10px #ecf0f1, 0 0 20px #ecf0f1, 0 0 30px #ecf0f1,
-                   0 0 40px #3498db, 0 0 70px #3498db, 0 0 80px #3498db,
-                   0 0 100px #3498db;
-    }
-    to {
-      text-shadow: 0 0 5px #ecf0f1, 0 0 10px #ecf0f1, 0 0 15px #ecf0f1,
-                   0 0 20px #3498db, 0 0 35px #3498db, 0 0 40px #3498db,
-                   0 0 50px #3498db;
-    }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USB 관리 대시보드</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <div class="test-text">Hello Admin</div>
+
+    <div class="sidebar">
+        <h2 class="sidebar-header">USB 관리 시스템</h2>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html" class="active"><span>🖥️</span> 대시보드</a></li>
+                <li><a href="whitelist.html"><span>🛡️</span> 화이트리스트 관리</a></li>
+                <li><a href="#"><span>📜</span> 로그 기록</a></li>
+                <li><a href="#"><span>⚙️</span> 설정</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header class="main-header">
+            <h1>사용자 모니터링 대시보드</h1>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h3 class="card-header">연결된 사용자 목록</h3>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>상태</th>
+                            <th>부서</th>
+                            <th>직급</th>
+                            <th>사용자</th>
+                            <th>컴퓨터 이름</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="user-row" data-target="details-1">
+                            <td><span class="status-dot online" id="status-1"></span></td>
+                            <td>개발팀</td>
+                            <td>팀장</td>
+                            <td>홍길동</td>
+                            <td>DEV-PC-01</td>
+                        </tr>
+                        <tr class="details-row" id="details-1">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (홍길동)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>Kingston DataTraveler</strong>
+                                            <span>(S/N: 001A...B2C)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text allowed">허용됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>Logitech Unifying Receiver</strong>
+                                            <span>(S/N: 4007...11F)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text blocked">차단됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-2">
+                            <td><span class="status-dot offline" id="status-2"></span></td>
+                            <td>마케팅팀</td>
+                            <td>사원</td>
+                            <td>이순신</td>
+                            <td>MKT-PC-05</td>
+                        </tr>
+                        <tr class="details-row" id="details-2">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (이순신)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>정보 없음</strong> (오프라인 상태)
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-3">
+                            <td><span class="status-dot online" id="status-3"></span></td>
+                            <td>인사팀</td>
+                            <td>대리</td>
+                            <td>유관순</td>
+                            <td>HR-PC-02</td>
+                        </tr>
+                        <tr class="details-row" id="details-3">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (유관순)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>Sandisk Ultra</strong>
+                                            <span>(S/N: 99A8...C4E)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text allowed">허용됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-4">
+                            <td><span class="status-dot online" id="status-4"></span></td>
+                            <td>재무팀</td>
+                            <td>사원</td>
+                            <td>강감찬</td>
+                            <td>FIN-PC-03</td>
+                        </tr>
+                        <tr class="details-row" id="details-4">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (강감찬)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>Sandisk Blade</strong>
+                                            <span>(S/N: 221B...A4C)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text blocked">차단됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-5">
+                            <td><span class="status-dot online" id="status-5"></span></td>
+                            <td>디자인팀</td>
+                            <td>과장</td>
+                            <td>김유신</td>
+                            <td>DSN-PC-01</td>
+                        </tr>
+                        <tr class="details-row" id="details-5">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (김유신)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>Wacom Tablet</strong>
+                                            <span>(S/N: WAC...01A)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text allowed">허용됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>T-Mobile 4G Stick</strong>
+                                            <span>(S/N: TM...99F)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text blocked">차단됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-6">
+                            <td><span class="status-dot offline" id="status-6"></span></td>
+                            <td>기획팀</td>
+                            <td>부장</td>
+                            <td>세종대왕</td>
+                            <td>PLAN-PC-01</td>
+                        </tr>
+                        <tr class="details-row" id="details-6">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (세종대왕)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>정보 없음</strong> (오프라인 상태)
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr class="user-row" data-target="details-7">
+                            <td><span class="status-dot online" id="status-7"></span></td>
+                            <td>영업팀</td>
+                            <td>대리</td>
+                            <td>안중근</td>
+                            <td>SALE-PC-07</td>
+                        </tr>
+                        <tr class="details-row" id="details-7">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (안중근)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>Logitech G Pro Mouse</strong>
+                                            <span>(S/N: LOG...22B)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text allowed">허용됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-8">
+                            <td><span class="status-dot online" id="status-8"></span></td>
+                            <td>디자인팀</td>
+                            <td>사원</td>
+                            <td>신사임당</td>
+                            <td>DSN-PC-04</td>
+                        </tr>
+                        <tr class="details-row" id="details-8">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (신사임당)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>i-Disk 32GB</strong>
+                                            <span>(S/N: 11A...CDE)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text blocked">차단됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-9">
+                            <td><span class="status-dot online" id="status-9"></span></td>
+                            <td>R&D</td>
+                            <td>선임연구원</td>
+                            <td>이황</td>
+                            <td>RD-PC-02</td>
+                        </tr>
+                        <tr class="details-row" id="details-9">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (이황)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>USB-to-Serial</strong>
+                                            <span>(S/N: FTD...A1)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text blocked">차단됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>Kingston 128GB</strong>
+                                            <span>(S/N: K...44F)</span>
+                                        </div>
+                                        <div class="control">
+                                            <span class="status-text blocked">차단됨</span>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="user-row" data-target="details-10">
+                            <td><span class="status-dot offline" id="status-10"></span></td>
+                            <td>마케팅팀</td>
+                            <td>과장</td>
+                            <td>황진이</td>
+                            <td>MKT-PC-02</td>
+                        </tr>
+                        <tr class="details-row" id="details-10">
+                            <td colspan="5" class="details-cell">
+                                <div class="details-content">
+                                    <h4>연결된 USB 장치 (황진이)</h4>
+                                    <div class="usb-device">
+                                        <div class="usb-device-info">
+                                            <strong>정보 없음</strong> (오프라인 상태)
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

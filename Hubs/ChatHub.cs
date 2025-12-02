@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging; // 로깅을 위해 필요
 using SignalRServer.Services;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SignalRServer.Hubs
@@ -14,15 +15,17 @@ namespace SignalRServer.Hubs
         // ILogger 객체를 저장하기 위한 읽기 전용 멤버 변수
         private readonly ILogger<ChatHub> _logger;
         private readonly IClientRepository _clientRepository;
+        private readonly IUsbEventRepository _usbEventRepository;
 
         /// <summary>
         /// 생성자 주입(Constructor Injection)을 통해 ILogger 인스턴스를 받습니다.
         /// ASP.NET Core의 DI 시스템이 자동으로 ILogger<ChatHub> 객체를 생성하여 전달해 줍니다.
         /// </summary>
-        public ChatHub(ILogger<ChatHub> logger, IClientRepository clientRepository)
+        public ChatHub(ILogger<ChatHub> logger, IClientRepository clientRepository, IUsbEventRepository usbEventRepository)
         {
             _logger = logger;
             _clientRepository = clientRepository;
+            _usbEventRepository = usbEventRepository;
         }
 
         /// <summary>
@@ -82,6 +85,52 @@ namespace SignalRServer.Hubs
         public Task<IReadOnlyList<ConnectedClient>> GetConnectedClients()
         {
             return _clientRepository.GetClientsAsync();
+        }
+
+        /// <summary>
+        /// 클라이언트가 감지한 USB 장치 목록을 서버에 전달합니다.
+        /// </summary>
+        public async Task ReportUsbDevices(List<UsbDeviceInfoDto> devices)
+        {
+            if (devices == null || devices.Count == 0)
+            {
+                _logger.LogInformation("🔌 USB 장치 보고 요청이 비어 있습니다. Connection ID: {ConnectionId}", Context.ConnectionId);
+                return;
+            }
+
+            var eventsToSave = new List<UsbEvent>(devices.Count);
+            var detectedAt = DateTime.UtcNow;
+
+            foreach (var device in devices)
+            {
+                if (device == null)
+                {
+                    continue;
+                }
+
+                eventsToSave.Add(new UsbEvent
+                {
+                    ConnectionId = Context.ConnectionId,
+                    DeviceIndex = device.DeviceIndex,
+                    VendorId = device.VendorId,
+                    ProductId = device.ProductId,
+                    SerialNumber = (device.SerialNumber ?? string.Empty).Trim(),
+                    ProductString = (device.ProductString ?? string.Empty).Trim(),
+                    ManufacturerString = (device.ManufacturerString ?? string.Empty).Trim(),
+                    IsBlocked = device.IsBlocked,
+                    DetectedAt = detectedAt
+                });
+            }
+
+            if (eventsToSave.Count == 0)
+            {
+                _logger.LogInformation("🔌 유효한 USB 장치 정보가 없어 저장을 건너뜁니다. Connection ID: {ConnectionId}", Context.ConnectionId);
+                return;
+            }
+
+            await _usbEventRepository.AddEventsAsync(eventsToSave);
+
+            _logger.LogInformation("💾 USB 장치 {Count}건을 저장했습니다. Connection ID: {ConnectionId}", eventsToSave.Count, Context.ConnectionId);
         }
     }
 }
