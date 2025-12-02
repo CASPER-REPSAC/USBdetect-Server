@@ -9,12 +9,12 @@
 <body>
 
     <div class="sidebar">
-        <h2 class="sidebar-header">USB 관리 콘솔</h2>
+        <h2 class="sidebar-header">USB 관리 시스템</h2>
         <nav class="sidebar-nav">
             <ul>
-                <li><a href="index.html"><span>🏠</span> 모니터링</a></li>
-                <li><a href="whitelist.html" class="active"><span>✅</span> 화이트리스트 관리</a></li>
-                <li><a href="#"><span>📄</span> 로그 기록</a></li>
+                <li><a href="index.html"><span>🖥️</span> 대시보드</a></li>
+                <li><a href="whitelist.html" class="active"><span>🛡️</span> 화이트리스트 관리</a></li>
+                <li><a href="#"><span>📜</span> 로그 기록</a></li>
                 <li><a href="#"><span>⚙️</span> 설정</a></li>
             </ul>
         </nav>
@@ -43,13 +43,13 @@
                             <th>장치명</th>
                             <th>VID/PID</th>
                             <th>허용여부</th>
-                            <th>발견시간(UTC)</th>
+                            <th>등록시간</th>
                             <th>ConnectionId</th>
-                            <th>삭제</th>
+                            <th>장치삭제</th>
                         </tr>
                     </thead>
                     <tbody id="event-body">
-                        <tr><td colspan="5">로딩 중...</td></tr>
+                        <tr><td colspan="6">로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -59,13 +59,13 @@
     <script>
         async function loadEvents() {
             const body = document.getElementById('event-body');
-            body.innerHTML = '<tr><td colspan="5">로딩 중...</td></tr>';
+            body.innerHTML = '<tr><td colspan="6">로딩 중...</td></tr>';
             try {
                 const res = await fetch('/api/usb-events?take=200');
                 if (!res.ok) throw new Error('서버 응답 오류');
                 const data = await res.json();
                 if (!Array.isArray(data) || data.length === 0) {
-                    body.innerHTML = '<tr><td colspan="5">표시할 데이터가 없습니다.</td></tr>';
+                    body.innerHTML = '<tr><td colspan="6">표시할 데이터가 없습니다.</td></tr>';
                     return;
                 }
                 body.innerHTML = data.map(d => {
@@ -73,7 +73,7 @@
                     const pid = Number(d.productId).toString(16).padStart(4, '0').toUpperCase();
                     const allowed = d.isBlocked ? '차단' : '허용';
                     const name = d.productString || d.manufacturerString || '(이름 없음)';
-                    const detected = d.detectedAt ?? '';
+                    const detected = formatDate(d.detectedAt);
                     const conn = d.connectionId ?? '';
                     return `<tr>
                         <td>${escapeHtml(name)}</td>
@@ -86,7 +86,7 @@
                 }).join('');
                 attachDeleteHandlers();
             } catch (err) {
-                body.innerHTML = `<tr><td colspan="5">불러오기 실패: ${err.message}</td></tr>`;
+                body.innerHTML = `<tr><td colspan="6">불러오기 실패: ${err.message}</td></tr>`;
             }
         }
 
@@ -94,6 +94,15 @@
             return String(str).replace(/[&<>"']/g, c => ({
                 '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
             }[c] || c));
+        }
+
+        function formatDate(value) {
+            if (!value) return '';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '';
+            const pad = (num) => String(num).padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+                   `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
         }
 
         function attachDeleteHandlers() {

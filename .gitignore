@@ -428,3 +428,5 @@ server-down.sh
 server-restart.sh
 server.log
 server.pid
+# Ignore local temp playground
+Temp/

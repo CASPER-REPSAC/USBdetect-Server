@@ -40,7 +40,7 @@ namespace SignalRServer.Hubs
                 ConnectionId = Context.ConnectionId,
                 Name = name,
                 RemoteIp = remoteIp,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             });
 
             _logger.LogInformation("Client connected. Connection ID: {ConnectionId}, Name: {Name}, RemoteIp: {RemoteIp}", Context.ConnectionId, name, remoteIp);
@@ -74,7 +74,7 @@ namespace SignalRServer.Hubs
             }
 
             var eventsToSave = new List<UsbEvent>(devices.Count);
-            var detectedAt = DateTime.UtcNow;
+            var detectedAt = DateTime.Now;
 
             foreach (var device in devices)
             {
@@ -139,7 +139,7 @@ namespace SignalRServer.Hubs
                 return;
             }
 
-            var detectedAt = DateTime.UtcNow;
+            var detectedAt = DateTime.Now;
             var eventsToSave = new List<UsbEvent>(payload.Data.Count);
 
             foreach (var device in payload.Data)
