@@ -23,6 +23,7 @@ namespace SignalRServer.Services
     {
         Task AddEventsAsync(IEnumerable<UsbEvent> usbEvents);
         Task<IReadOnlyList<UsbEvent>> GetRecentEventsAsync(int take = 100);
+        Task DeleteEventAsync(int id);
     }
 
     public class SqliteUsbEventRepository : IUsbEventRepository
@@ -185,6 +186,18 @@ namespace SignalRServer.Services
             }
 
             return result;
+        }
+
+        public async Task DeleteEventAsync(int id)
+        {
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            await using var command = connection.CreateCommand();
+            command.CommandText = @"DELETE FROM UsbEvents WHERE Id = $id;";
+            command.Parameters.AddWithValue("$id", id);
+
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

@@ -45,6 +45,7 @@
                             <th>허용여부</th>
                             <th>발견시간(UTC)</th>
                             <th>ConnectionId</th>
+                            <th>삭제</th>
                         </tr>
                     </thead>
                     <tbody id="event-body">
@@ -80,8 +81,10 @@
                         <td>${allowed}</td>
                         <td>${escapeHtml(detected)}</td>
                         <td>${escapeHtml(conn)}</td>
+                        <td><button class="btn btn-danger" data-id="${d.id}">삭제</button></td>
                     </tr>`;
                 }).join('');
+                attachDeleteHandlers();
             } catch (err) {
                 body.innerHTML = `<tr><td colspan="5">불러오기 실패: ${err.message}</td></tr>`;
             }
@@ -91,6 +94,27 @@
             return String(str).replace(/[&<>"']/g, c => ({
                 '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
             }[c] || c));
+        }
+
+        function attachDeleteHandlers() {
+            const body = document.getElementById('event-body');
+            body.querySelectorAll('button[data-id]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-id');
+                    if (!id) return;
+                    const ok = confirm(`이 이벤트(ID: ${id})를 삭제할까요?`);
+                    if (!ok) return;
+                    btn.disabled = true;
+                    try {
+                        const res = await fetch(`/api/usb-events/${id}`, { method: 'DELETE' });
+                        if (!res.ok && res.status !== 204) throw new Error('삭제 실패');
+                        await loadEvents();
+                    } catch (err) {
+                        alert(`삭제 실패: ${err.message}`);
+                        btn.disabled = false;
+                    }
+                });
+            });
         }
 
         document.addEventListener('DOMContentLoaded', loadEvents);

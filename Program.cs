@@ -51,6 +51,13 @@ app.MapGet("/api/usb-events", async (IUsbEventRepository repo, int? take) =>
     return Results.Ok(events);
 });
 
+// API: USB 이벤트 단일 삭제
+app.MapDelete("/api/usb-events/{id:int}", async (IUsbEventRepository repo, int id) =>
+{
+    await repo.DeleteEventAsync(id);
+    return Results.NoContent();
+});
+
 // index.html Route
 app.MapGet("/", async context =>
 {
