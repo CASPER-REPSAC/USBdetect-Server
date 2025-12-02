@@ -122,7 +122,10 @@ namespace SignalRServer.Hubs
             ClientDeviceListMessage? payload;
             try
             {
-                payload = JsonSerializer.Deserialize<ClientDeviceListMessage>(jsonPayload);
+                // Allow clients to send camelCase or PascalCase JSON keys
+                payload = JsonSerializer.Deserialize<ClientDeviceListMessage>(
+                    jsonPayload,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
             catch (Exception ex)
             {
@@ -187,4 +190,3 @@ namespace SignalRServer.Hubs
         }
     }
 }
-

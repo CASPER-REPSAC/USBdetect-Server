@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
   </ItemGroup>
 
+  <!-- Temp 하위 스크립트(예: DummyPusher)는 서버 빌드 대상이 아니므로 제외 -->
+  <ItemGroup>
+    <Compile Remove="Temp/**/*.cs" />
+  </ItemGroup>
+
 </Project>
