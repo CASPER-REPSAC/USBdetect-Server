@@ -11,6 +11,7 @@ namespace SignalRServer.Services
         public int Id { get; set; }
         public string ConnectionId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public string RemoteIp { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
     }
 
@@ -45,9 +46,32 @@ namespace SignalRServer.Services
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     ConnectionId TEXT NOT NULL UNIQUE,
                     Name TEXT NOT NULL,
+                    RemoteIp TEXT NOT NULL DEFAULT '',
                     CreatedAt TEXT NOT NULL
                   );";
             command.ExecuteNonQuery();
+
+            EnsureColumnExists(connection, "ConnectedClients", "RemoteIp", "TEXT NOT NULL DEFAULT ''");
+        }
+
+        private static void EnsureColumnExists(SqliteConnection connection, string tableName, string columnName, string columnDefinition)
+        {
+            using var checkCommand = connection.CreateCommand();
+            checkCommand.CommandText = $"PRAGMA table_info({tableName});";
+
+            using var reader = checkCommand.ExecuteReader();
+            while (reader.Read())
+            {
+                var existingColumnName = reader.GetString(1);
+                if (string.Equals(existingColumnName, columnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            using var alterCommand = connection.CreateCommand();
+            alterCommand.CommandText = $"ALTER TABLE {tableName} ADD COLUMN {columnName} {columnDefinition};";
+            alterCommand.ExecuteNonQuery();
         }
 
         public async Task AddClientAsync(ConnectedClient client)
@@ -57,10 +81,11 @@ namespace SignalRServer.Services
 
             await using var command = connection.CreateCommand();
             command.CommandText =
-                @"INSERT OR REPLACE INTO ConnectedClients (ConnectionId, Name, CreatedAt)
-                  VALUES ($connectionId, $name, $createdAt);";
+                @"INSERT OR REPLACE INTO ConnectedClients (ConnectionId, Name, RemoteIp, CreatedAt)
+                  VALUES ($connectionId, $name, $remoteIp, $createdAt);";
             command.Parameters.AddWithValue("$connectionId", client.ConnectionId);
             command.Parameters.AddWithValue("$name", client.Name);
+            command.Parameters.AddWithValue("$remoteIp", client.RemoteIp ?? string.Empty);
             command.Parameters.AddWithValue("$createdAt", client.CreatedAt.ToString("O"));
 
             await command.ExecuteNonQueryAsync();
@@ -87,7 +112,7 @@ namespace SignalRServer.Services
 
             await using var command = connection.CreateCommand();
             command.CommandText =
-                @"SELECT Id, ConnectionId, Name, CreatedAt
+                @"SELECT Id, ConnectionId, Name, RemoteIp, CreatedAt
                   FROM ConnectedClients
                   ORDER BY CreatedAt;";
 
@@ -99,7 +124,8 @@ namespace SignalRServer.Services
                     Id = reader.GetInt32(0),
                     ConnectionId = reader.GetString(1),
                     Name = reader.GetString(2),
-                    CreatedAt = DateTime.Parse(reader.GetString(3), null, DateTimeStyles.RoundtripKind)
+                    RemoteIp = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
+                    CreatedAt = DateTime.Parse(reader.GetString(4), null, DateTimeStyles.RoundtripKind)
                 });
             }
 
